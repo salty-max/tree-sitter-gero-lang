@@ -1,0 +1,33 @@
+{
+  "name": "tree-sitter-gero-lang",
+  "version": "0.1.0",
+  "description": "Parser for gero-lang",
+  "repository": "github:salty-max/tree-sitter-gero-lang",
+  "license": "MIT",
+  "author": "Maxime <salty-max> Blanc <max@jellycat.fr>",
+  "main": "bindings/node",
+  "types": "bindings/node",
+  "keywords": ["incremental", "parsing", "tree-sitter", "gero"],
+  "files": [
+    "grammar.js",
+    "tree-sitter.json",
+    "binding.gyp",
+    "prebuilds/**",
+    "bindings/node/*",
+    "queries/*",
+    "src/**"
+  ],
+  "devDependencies": {
+    "prebuildify": "^6.0.1",
+    "tree-sitter-cli": "^0.27.0"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.25.0"
+  },
+  "peerDependenciesMeta": {
+    "tree-sitter": { "optional": true }
+  },
+  "scripts": {
+    "test": "tree-sitter test"
+  }
+}

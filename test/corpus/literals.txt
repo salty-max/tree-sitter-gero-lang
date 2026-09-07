@@ -1,0 +1,203 @@
+================
+Numeric literals
+================
+
+def main()
+  let a = 42
+  let b = 1_000
+  let c = $FF
+  let d = $DEAD_BEEF
+  let e = 0b1010_0101
+  let f = 1.5
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      value: (fixed))))
+
+===============
+Boolean and nil
+===============
+
+def main()
+  let a = true
+  let b = false
+  let c = nil
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (boolean))
+    body: (let_declaration
+      name: (identifier)
+      value: (boolean))
+    body: (let_declaration
+      name: (identifier)
+      value: (nil))))
+
+====================
+Strings with escapes
+====================
+
+def main()
+  let a = "plain"
+  let b = "tab\there"
+  let c = "quote\"inside"
+  let d = "dollar\$sign"
+  let e = "hex\x41end"
+  let f = "trailing 5$"
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (string))
+    body: (let_declaration
+      name: (identifier)
+      value: (string
+        (escape_sequence)))
+    body: (let_declaration
+      name: (identifier)
+      value: (string
+        (escape_sequence)))
+    body: (let_declaration
+      name: (identifier)
+      value: (string
+        (escape_sequence)))
+    body: (let_declaration
+      name: (identifier)
+      value: (string
+        (escape_sequence)))
+    body: (let_declaration
+      name: (identifier)
+      value: (string))))
+
+=============
+Char literals
+=============
+
+def main()
+  let a: u8 = 'A'
+  let b: u8 = '\n'
+  let c: u8 = '\''
+  let d: u8 = '\x41'
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (char))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (char
+        (escape_sequence_char)))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (char
+        (escape_sequence_char)))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (char
+        (escape_sequence_char)))))
+
+=======================================
+String interpolation with a format spec
+=======================================
+
+def main()
+  let a = "hp: $(hero.stats.hp)"
+  let b = "dmg: $(dmg:3d)"
+  let c = "addr: $(p:04x) done"
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (string
+        (interpolation
+          (member_expression
+            object: (member_expression
+              object: (identifier)
+              property: (identifier))
+            property: (identifier)))))
+    body: (let_declaration
+      name: (identifier)
+      value: (string
+        (interpolation
+          (identifier)
+          format: (format_spec))))
+    body: (let_declaration
+      name: (identifier)
+      value: (string
+        (interpolation
+          (identifier)
+          format: (format_spec))))))
+
+========
+Comments
+========
+
+-- a leading comment
+def main() -- trailing
+  -- indented
+  print 1
+end
+
+---
+
+(source_file
+  (comment)
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    (comment)
+    (comment)
+    body: (print_statement
+      (number))))
+

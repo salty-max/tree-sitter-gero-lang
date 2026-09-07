@@ -1,0 +1,220 @@
+===================================
+Precedence follows the §4.2.1 table
+===================================
+
+def main()
+  let a = 1 + 2 * 3
+  let b = 1 < 2 and 3 >= 4 or not c
+  let d = 1 | 2 ^ 3 & 4 << 5
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (number)
+        right: (binary_expression
+          left: (number)
+          right: (number))))
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (binary_expression
+          left: (binary_expression
+            left: (number)
+            right: (number))
+          right: (binary_expression
+            left: (number)
+            right: (number)))
+        right: (unary_expression
+          (identifier))))
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (number)
+        right: (binary_expression
+          left: (number)
+          right: (binary_expression
+            left: (number)
+            right: (binary_expression
+              left: (number)
+              right: (number))))))))
+
+==================================
+Ranges bind looser than arithmetic
+==================================
+
+def main()
+  for i in 0..n + 1
+    print i
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (for_statement
+      binding: (identifier)
+      iterable: (range_expression
+        start: (number)
+        end: (binary_expression
+          left: (identifier)
+          right: (number)))
+      body: (print_statement
+        (identifier)))))
+
+================
+Inclusive ranges
+================
+
+def main()
+  for i in 0..=3
+    print i
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (for_statement
+      binding: (identifier)
+      iterable: (range_expression
+        start: (number)
+        end: (number))
+      body: (print_statement
+        (identifier)))))
+
+======================================
+Type test binds looser than comparison
+======================================
+
+def main()
+  let a = x is Action.Hit
+  let b = x > 1 is bool
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (identifier)
+        right: (member_expression
+          object: (identifier)
+          property: (identifier))))
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (number))
+        right: (identifier)))))
+
+===============
+Unary operators
+===============
+
+def main()
+  let a = -1
+  let b = not true
+  let c = ~mask
+  let d = &p
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (unary_expression
+        (number)))
+    body: (let_declaration
+      name: (identifier)
+      value: (unary_expression
+        (boolean)))
+    body: (let_declaration
+      name: (identifier)
+      value: (unary_expression
+        (identifier)))
+    body: (let_declaration
+      name: (identifier)
+      value: (unary_expression
+        (identifier)))))
+
+==================================
+Cast binds tighter than arithmetic
+==================================
+
+def main()
+  let a = x as u8 + 1
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (cast_expression
+          value: (identifier)
+          type: (primitive_type))
+        right: (number)))))
+
+=============================================
+Assignment, compound assignment and increment
+=============================================
+
+def main()
+  x = 1
+  x += 2
+  x <<= 1
+  x++
+  x--
+  _ = f()
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (assignment
+      target: (identifier)
+      value: (number))
+    body: (assignment
+      target: (identifier)
+      value: (number))
+    body: (assignment
+      target: (identifier)
+      value: (number))
+    body: (increment_statement
+      target: (identifier))
+    body: (increment_statement
+      target: (identifier))
+    body: (discard_statement
+      value: (call_expression
+        function: (identifier)
+        arguments: (argument_list)))))
+

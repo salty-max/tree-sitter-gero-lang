@@ -1,0 +1,193 @@
+============
+Import forms
+============
+
+use math
+use math as m
+use helper from utils
+use helper as h from "./utils.gr"
+use "./helpers.gr"
+
+---
+
+(source_file
+  (use_declaration
+    module: (identifier))
+  (use_declaration
+    module: (identifier)
+    alias: (identifier))
+  (use_declaration
+    symbol: (identifier)
+    source: (identifier))
+  (use_declaration
+    symbol: (identifier)
+    alias: (identifier)
+    source: (string))
+  (use_declaration
+    source: (string)))
+
+=============
+Let and const
+=============
+
+let x = 1
+let y: i16 = 2
+let z: u8
+local const MAX: i16 = 100
+
+---
+
+(source_file
+  (let_declaration
+    name: (identifier)
+    value: (number))
+  (let_declaration
+    name: (identifier)
+    type: (primitive_type)
+    value: (number))
+  (let_declaration
+    name: (identifier)
+    type: (primitive_type))
+  (const_declaration
+    name: (identifier)
+    type: (primitive_type)
+    value: (number)))
+
+========================================
+Function with parameters and return type
+========================================
+
+def add(a: i16, b: i16) -> i16
+  return a + b
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        type: (primitive_type)))
+    return_type: (primitive_type)
+    body: (return_statement
+      (binary_expression
+        left: (identifier)
+        right: (identifier)))))
+
+==============================
+Function without a return type
+==============================
+
+def greet(name: str)
+  print name
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (primitive_type)))
+    body: (print_statement
+      (identifier))))
+
+========================
+Local and bake functions
+========================
+
+local def helper() -> i16
+  return 1
+end
+
+bake def table() -> i16
+  return 2
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (primitive_type)
+    body: (return_statement
+      (number)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (primitive_type)
+    body: (return_statement
+      (number))))
+
+=================
+Struct definition
+=================
+
+struct Pt
+  x: i16
+  y: i16
+end
+
+---
+
+(source_file
+  (struct_definition
+    name: (identifier)
+    (field_declaration
+      name: (identifier)
+      type: (primitive_type))
+    (field_declaration
+      name: (identifier)
+      type: (primitive_type))))
+
+==================================
+Struct fields with trailing commas
+==================================
+
+struct Header
+  magic: u16,
+  pos: u16,
+end
+
+---
+
+(source_file
+  (struct_definition
+    name: (identifier)
+    (field_declaration
+      name: (identifier)
+      type: (primitive_type))
+    (field_declaration
+      name: (identifier)
+      type: (primitive_type))))
+
+==========================
+Enum with payload variants
+==========================
+
+enum Action
+  case Idle
+  case Hit(power: i16)
+end
+
+---
+
+(source_file
+  (enum_definition
+    name: (identifier)
+    (enum_variant
+      name: (identifier))
+    (enum_variant
+      name: (identifier)
+      (field_declaration
+        name: (identifier)
+        type: (primitive_type)))))
+

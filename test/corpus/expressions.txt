@@ -1,0 +1,289 @@
+===========================
+Calls, members and indexing
+===========================
+
+def main()
+  let a = obj.method(1, 2)
+  let b = grid[0]
+  let c = self.stats.hp
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (call_expression
+        function: (member_expression
+          object: (identifier)
+          property: (identifier))
+        arguments: (argument_list
+          (number)
+          (number))))
+    body: (let_declaration
+      name: (identifier)
+      value: (index_expression
+        object: (identifier)
+        index: (number)))
+    body: (let_declaration
+      name: (identifier)
+      value: (member_expression
+        object: (member_expression
+          object: (self)
+          property: (identifier))
+        property: (identifier)))))
+
+=========================
+Tuple members are indexed
+=========================
+
+def main()
+  let a = p.0
+  let b = p.1
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (member_expression
+        object: (identifier)
+        property: (number)))
+    body: (let_declaration
+      name: (identifier)
+      value: (member_expression
+        object: (identifier)
+        property: (number)))))
+
+=========================
+Struct and array literals
+=========================
+
+def main()
+  let p = Pt { x: 1, y: 2 }
+  let q = Pt {
+    x: 1,
+    y: 2,
+  }
+  let a = [1, 2, 3]
+  let z = [0; 4]
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (struct_literal
+        type: (identifier)
+        (field_initializer
+          name: (identifier)
+          value: (number))
+        (field_initializer
+          name: (identifier)
+          value: (number))))
+    body: (let_declaration
+      name: (identifier)
+      value: (struct_literal
+        type: (identifier)
+        (field_initializer
+          name: (identifier)
+          value: (number))
+        (field_initializer
+          name: (identifier)
+          value: (number))))
+    body: (let_declaration
+      name: (identifier)
+      value: (array_literal
+        (number)
+        (number)
+        (number)))
+    body: (let_declaration
+      name: (identifier)
+      value: (array_literal
+        value: (number)
+        count: (number)))))
+
+=============
+Short lambdas
+=============
+
+def main()
+  let f = |v: i16| -> i16 v * 2
+  let g = || 0
+  let h = |a, b| a + b
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (short_lambda
+        (parameter
+          name: (identifier)
+          type: (primitive_type))
+        return_type: (primitive_type)
+        body: (binary_expression
+          left: (identifier)
+          right: (number))))
+    body: (let_declaration
+      name: (identifier)
+      value: (short_lambda
+        body: (number)))
+    body: (let_declaration
+      name: (identifier)
+      value: (short_lambda
+        (parameter
+          name: (identifier))
+        (parameter
+          name: (identifier))
+        body: (binary_expression
+          left: (identifier)
+          right: (identifier))))))
+
+============
+Long lambdas
+============
+
+def main()
+  let square = lambda (x: i16) -> i16
+    return x * x
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (lambda
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (primitive_type)))
+        return_type: (primitive_type)
+        body: (return_statement
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))))))
+
+===================
+Do as an expression
+===================
+
+def main()
+  let total = do
+    let t = 1 + 2
+    t * 3
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (do_expression
+        (let_declaration
+          name: (identifier)
+          value: (binary_expression
+            left: (number)
+            right: (number)))
+        (expression_statement
+          (binary_expression
+            left: (identifier)
+            right: (number)))))))
+
+============================================
+Tuple expressions and multiple return values
+============================================
+
+def pair() -> (i16, i16)
+  return (1, 2)
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (tuple_type
+      (primitive_type)
+      (primitive_type))
+    body: (return_statement
+      (tuple_expression
+        (number)
+        (number)))))
+
+=========================================
+Multi-line argument lists ignore newlines
+=========================================
+
+def main()
+  let x = add(
+    1,
+    2
+  )
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (call_expression
+        function: (identifier)
+        arguments: (argument_list
+          (number)
+          (number))))))
+
+========================
+Cast and nullable values
+========================
+
+def main()
+  let a = x as u8
+  let b: str? = nil
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (cast_expression
+        value: (identifier)
+        type: (primitive_type)))
+    body: (let_declaration
+      name: (identifier)
+      type: (nullable_type
+        inner: (primitive_type))
+      value: (nil))))
+

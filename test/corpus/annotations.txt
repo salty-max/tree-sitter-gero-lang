@@ -1,0 +1,98 @@
+======================
+Bare literal arguments
+======================
+
+@bank 3
+@addr $FE40
+@volatile
+let DISPCTL: u8 = 0
+
+---
+
+(source_file
+  (let_declaration
+    (annotation
+      name: (annotation_name)
+      argument: (number))
+    (annotation
+      name: (annotation_name)
+      argument: (number))
+    (annotation
+      name: (annotation_name))
+    name: (identifier)
+    type: (primitive_type)
+    value: (number)))
+
+=======================
+Parenthesized arguments
+=======================
+
+@align(16)
+let sheet: [u8; 16] = [0; 16]
+
+@interrupt($07)
+def on_vblank()
+  return
+end
+
+---
+
+(source_file
+  (let_declaration
+    (annotation
+      name: (annotation_name)
+      (number))
+    name: (identifier)
+    type: (array_type
+      element: (primitive_type)
+      length: (number))
+    value: (array_literal
+      value: (number)
+      count: (number)))
+  (function_definition
+    (annotation
+      name: (annotation_name)
+      (number))
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (return_statement)))
+
+==============================
+Stacked annotations on a class
+==============================
+
+@abstract
+class Entity
+  @abstract
+  def take_turn(self) -> Action
+
+  @override
+  @private
+  def hidden(self)
+    return
+  end
+end
+
+---
+
+(source_file
+  (class_definition
+    (abstract_annotation)
+    name: (identifier)
+    body: (function_definition
+      (abstract_annotation)
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter))
+      return_type: (type_identifier
+        (identifier)))
+    body: (function_definition
+      (annotation
+        name: (annotation_name))
+      (annotation
+        name: (annotation_name))
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter))
+      body: (return_statement))))
+

@@ -1,0 +1,274 @@
+=================
+If, elif and else
+=================
+
+def main()
+  if x > 1
+    print 1
+  elif x > 0
+    print 0
+  else
+    print -1
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (if_statement
+      condition: (binary_expression
+        left: (identifier)
+        right: (number))
+      consequence: (print_statement
+        (number))
+      (elif_clause
+        condition: (binary_expression
+          left: (identifier)
+          right: (number))
+        consequence: (print_statement
+          (number)))
+      (else_clause
+        consequence: (print_statement
+          (unary_expression
+            (number)))))))
+
+===================
+If let with a guard
+===================
+
+def main()
+  if let Action.Hit(p) = a when p > 0
+    print p
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (if_statement
+      condition: (let_condition
+        pattern: (variant_pattern
+          path: (dotted_name
+            (identifier)
+            (identifier))
+          (identifier))
+        value: (identifier)
+        guard: (binary_expression
+          left: (identifier)
+          right: (number)))
+      consequence: (print_statement
+        (identifier)))))
+
+===================
+While and while let
+===================
+
+def main()
+  while running
+    tick()
+  end
+
+  while let Action.Hit(p) = next()
+    print p
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (while_statement
+      condition: (identifier)
+      body: (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))
+    body: (while_statement
+      condition: (let_condition
+        pattern: (variant_pattern
+          path: (dotted_name
+            (identifier)
+            (identifier))
+          (identifier))
+        value: (call_expression
+          function: (identifier)
+          arguments: (argument_list)))
+      body: (print_statement
+        (identifier)))))
+
+============================
+For over a range with a step
+============================
+
+def main()
+  for i in 0..10 step 2
+    print i
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (for_statement
+      binding: (identifier)
+      iterable: (range_expression
+        start: (number)
+        end: (number))
+      step: (number)
+      body: (print_statement
+        (identifier)))))
+
+=====================================
+Labeled loops with break and continue
+=====================================
+
+def main()
+  for y in 0..4 :rows
+    for x in 0..4
+      if x == y
+        continue :rows
+      end
+      break :rows
+    end
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (for_statement
+      binding: (identifier)
+      iterable: (range_expression
+        start: (number)
+        end: (number))
+      label: (loop_label
+        (identifier))
+      body: (for_statement
+        binding: (identifier)
+        iterable: (range_expression
+          start: (number)
+          end: (number))
+        body: (if_statement
+          condition: (binary_expression
+            left: (identifier)
+            right: (identifier))
+          consequence: (continue_statement
+            label: (loop_label
+              (identifier))))
+        body: (break_statement
+          label: (loop_label
+            (identifier)))))))
+
+============
+Repeat until
+============
+
+def main()
+  repeat
+    i++
+  until i > 3
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (repeat_statement
+      body: (increment_statement
+        target: (identifier))
+      condition: (binary_expression
+        left: (identifier)
+        right: (number)))))
+
+====================================
+Match with guards and tuple patterns
+====================================
+
+def main()
+  match a
+    case Action.Hit(p) when p > 10 => return 2
+    case (Element.Fire, Element.Earth) => return 1
+    case _ =>
+      print "none"
+      return 0
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (match_statement
+      value: (identifier)
+      (match_arm
+        pattern: (variant_pattern
+          path: (dotted_name
+            (identifier)
+            (identifier))
+          (identifier))
+        guard: (binary_expression
+          left: (identifier)
+          right: (number))
+        body: (return_statement
+          (number)))
+      (match_arm
+        pattern: (tuple_pattern
+          (dotted_name
+            (identifier)
+            (identifier))
+          (dotted_name
+            (identifier)
+            (identifier)))
+        body: (return_statement
+          (number)))
+      (match_arm
+        pattern: (wildcard_pattern)
+        body: (print_statement
+          (string))
+        body: (return_statement
+          (number))))))
+
+=========================
+Block statement and defer
+=========================
+
+def main()
+  do
+    print 1
+  end
+  defer cleanup()
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (print_statement
+        (number)))
+    body: (defer_statement
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))))
+

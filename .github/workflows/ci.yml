@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      # A stale src/parser.c against an edited grammar.js is the one
+      # failure the corpus tests cannot catch, so regenerate first.
+      - name: Generate
+        run: npx tree-sitter generate
+
+      - name: Check the committed parser is current
+        run: git diff --exit-code -- src/
+
+      - name: Corpus tests
+        run: npx tree-sitter test
+
+      # The corpus is hand-written; the gero examples are the real
+      # thing, and they must parse without a single ERROR node.
+      - name: Parse the gero example corpus
+        run: |
+          git clone --depth 1 https://github.com/salty-max/gero.git /tmp/gero
+          status=0
+          for f in /tmp/gero/examples/lang/*.gr /tmp/gero/docs/examples/*.gr; do
+            if npx tree-sitter parse "$f" | grep -qE 'ERROR|MISSING'; then
+              echo "FAIL $f"
+              npx tree-sitter parse "$f" | grep -nE 'ERROR|MISSING' | head -5
+              status=1
+            fi
+          done
+          exit $status

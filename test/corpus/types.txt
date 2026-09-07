@@ -1,0 +1,243 @@
+===============
+Primitive types
+===============
+
+def main()
+  let a: i8 = 0
+  let b: u8 = 0
+  let c: i16 = 0
+  let d: u16 = 0
+  let e: i32 = 0
+  let f: u32 = 0
+  let g: fx8 = 0.5
+  let h: fx16 = 0.5
+  let i: bool = true
+  let j: str = ""
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (number))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (fixed))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (fixed))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (boolean))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (string))))
+
+===============================
+Array, tuple and function types
+===============================
+
+def main()
+  let a: [u8; 4] = [0; 4]
+  let b: (i16, i16) = (1, 2)
+  let c: fn(i16) -> i16 = double
+  let d: fn() = noop
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      type: (array_type
+        element: (primitive_type)
+        length: (number))
+      value: (array_literal
+        value: (number)
+        count: (number)))
+    body: (let_declaration
+      name: (identifier)
+      type: (tuple_type
+        (primitive_type)
+        (primitive_type))
+      value: (tuple_expression
+        (number)
+        (number)))
+    body: (let_declaration
+      name: (identifier)
+      type: (function_type
+        (primitive_type)
+        return_type: (primitive_type))
+      value: (identifier))
+    body: (let_declaration
+      name: (identifier)
+      type: (function_type)
+      value: (identifier))))
+
+==============
+Nullable types
+==============
+
+def main()
+  let a: str? = nil
+  let b: fn() -> str? = maybe
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      type: (nullable_type
+        inner: (primitive_type))
+      value: (nil))
+    body: (let_declaration
+      name: (identifier)
+      type: (function_type
+        return_type: (nullable_type
+          inner: (primitive_type)))
+      value: (identifier))))
+
+===============
+Reference types
+===============
+
+def bump(p: &Pt)
+  p.x = 1
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (reference_type
+          inner: (type_identifier
+            (identifier)))))
+    body: (assignment
+      target: (member_expression
+        object: (identifier)
+        property: (identifier))
+      value: (number))))
+
+=================
+Generic Vec types
+=================
+
+def main()
+  let a: Vec(i16) = Vec.new()
+  let b: Vec(Vec(u8)) = Vec.new()
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      type: (generic_type
+        name: (identifier)
+        (primitive_type))
+      value: (call_expression
+        function: (member_expression
+          object: (identifier)
+          property: (identifier))
+        arguments: (argument_list)))
+    body: (let_declaration
+      name: (identifier)
+      type: (generic_type
+        name: (identifier)
+        (generic_type
+          name: (identifier)
+          (primitive_type)))
+      value: (call_expression
+        function: (member_expression
+          object: (identifier)
+          property: (identifier))
+        arguments: (argument_list)))))
+
+===================
+Variadic parameters
+===================
+
+def log(level: u8, args: ...)
+  print level
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (primitive_type))
+      (parameter
+        name: (identifier)
+        type: (variadic_type)))
+    body: (print_statement
+      (identifier))))
+
+====================
+Qualified type names
+====================
+
+def main()
+  let a: math.Vec = zero
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      type: (type_identifier
+        (dotted_name
+          (identifier)
+          (identifier)))
+      value: (identifier))))
+

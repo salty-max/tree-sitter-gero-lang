@@ -1,0 +1,178 @@
+===================================
+Class with fields, init and methods
+===================================
+
+class Entity
+  let name: str
+  const MAX: i16 = 100
+
+  def init(self, name: str)
+    self.name = name
+  end
+
+  def describe(self) -> str
+    return self.name
+  end
+end
+
+---
+
+(source_file
+  (class_definition
+    name: (identifier)
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type))
+    body: (const_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (number))
+    body: (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter)
+        (parameter
+          name: (identifier)
+          type: (primitive_type)))
+      body: (assignment
+        target: (member_expression
+          object: (self)
+          property: (identifier))
+        value: (identifier)))
+    body: (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter))
+      return_type: (primitive_type)
+      body: (return_statement
+        (member_expression
+          object: (self)
+          property: (identifier))))))
+
+=====================
+Inheritance and super
+=====================
+
+class Hero extends Entity
+  def init(self, name: str)
+    super.init(name)
+  end
+end
+
+---
+
+(source_file
+  (class_definition
+    name: (identifier)
+    superclass: (identifier)
+    body: (function_definition
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter)
+        (parameter
+          name: (identifier)
+          type: (primitive_type)))
+      body: (expression_statement
+        (call_expression
+          function: (member_expression
+            object: (super)
+            property: (identifier))
+          arguments: (argument_list
+            (identifier)))))))
+
+======================================
+Abstract class with an abstract method
+======================================
+
+@abstract
+class Entity
+  @abstract
+  def take_turn(self) -> Action
+
+  @final
+  def name_of(self) -> str
+    return self.name
+  end
+end
+
+---
+
+(source_file
+  (class_definition
+    (abstract_annotation)
+    name: (identifier)
+    body: (function_definition
+      (abstract_annotation)
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter))
+      return_type: (type_identifier
+        (identifier)))
+    body: (function_definition
+      (annotation
+        name: (annotation_name))
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter))
+      return_type: (primitive_type)
+      body: (return_statement
+        (member_expression
+          object: (self)
+          property: (identifier))))))
+
+==================
+Method annotations
+==================
+
+class Hero
+  @override
+  def take_turn(self) -> Action
+    return Action.Idle
+  end
+
+  @static
+  def make() -> Hero
+    return Hero {}
+  end
+
+  @private
+  def secret(self)
+    return
+  end
+end
+
+---
+
+(source_file
+  (class_definition
+    name: (identifier)
+    body: (function_definition
+      (annotation
+        name: (annotation_name))
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter))
+      return_type: (type_identifier
+        (identifier))
+      body: (return_statement
+        (member_expression
+          object: (identifier)
+          property: (identifier))))
+    body: (function_definition
+      (annotation
+        name: (annotation_name))
+      name: (identifier)
+      parameters: (parameter_list)
+      return_type: (type_identifier
+        (identifier))
+      body: (return_statement
+        (struct_literal
+          type: (identifier))))
+    body: (function_definition
+      (annotation
+        name: (annotation_name))
+      name: (identifier)
+      parameters: (parameter_list
+        (self_parameter))
+      body: (return_statement))))
+

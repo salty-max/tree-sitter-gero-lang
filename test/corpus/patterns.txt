@@ -1,0 +1,228 @@
+======================================
+Literal, wildcard and binding patterns
+======================================
+
+def main()
+  match n
+    case 42 => print 1
+    case "hello" => print 2
+    case _ => print 3
+    case x => print x
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (match_statement
+      value: (identifier)
+      (match_arm
+        pattern: (number)
+        body: (print_statement
+          (number)))
+      (match_arm
+        pattern: (string)
+        body: (print_statement
+          (number)))
+      (match_arm
+        pattern: (wildcard_pattern)
+        body: (print_statement
+          (number)))
+      (match_arm
+        pattern: (identifier)
+        body: (print_statement
+          (identifier))))))
+
+===========
+Or patterns
+===========
+
+def main()
+  match n
+    case 1 | 2 | 3 => print 1
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (match_statement
+      value: (identifier)
+      (match_arm
+        pattern: (or_pattern
+          (or_pattern
+            (number)
+            (number))
+          (number))
+        body: (print_statement
+          (number))))))
+
+==============
+Range patterns
+==============
+
+def main()
+  match n
+    case 0..=15 => print 1
+    case 16..32 => print 2
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (match_statement
+      value: (identifier)
+      (match_arm
+        pattern: (range_pattern
+          start: (number)
+          end: (number))
+        body: (print_statement
+          (number)))
+      (match_arm
+        pattern: (range_pattern
+          start: (number)
+          end: (number))
+        body: (print_statement
+          (number))))))
+
+==============================
+Variant patterns with payloads
+==============================
+
+def main()
+  match item
+    case Item.Sword => print 1
+    case Item.Potion(amount) => print amount
+    case Item.Key(name, _) => print name
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (match_statement
+      value: (identifier)
+      (match_arm
+        pattern: (dotted_name
+          (identifier)
+          (identifier))
+        body: (print_statement
+          (number)))
+      (match_arm
+        pattern: (variant_pattern
+          path: (dotted_name
+            (identifier)
+            (identifier))
+          (identifier))
+        body: (print_statement
+          (identifier)))
+      (match_arm
+        pattern: (variant_pattern
+          path: (dotted_name
+            (identifier)
+            (identifier))
+          (identifier)
+          (wildcard_pattern))
+        body: (print_statement
+          (identifier))))))
+
+=========================
+Tuple and struct patterns
+=========================
+
+def main()
+  match p
+    case (a, b) => print a
+    case Player { hp, mp } => print hp
+    case Player { hp: 0, mp } => print mp
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (match_statement
+      value: (identifier)
+      (match_arm
+        pattern: (tuple_pattern
+          (identifier)
+          (identifier))
+        body: (print_statement
+          (identifier)))
+      (match_arm
+        pattern: (struct_pattern
+          type: (identifier)
+          (field_pattern
+            name: (identifier))
+          (field_pattern
+            name: (identifier)))
+        body: (print_statement
+          (identifier)))
+      (match_arm
+        pattern: (struct_pattern
+          type: (identifier)
+          (field_pattern
+            name: (identifier)
+            pattern: (number))
+          (field_pattern
+            name: (identifier)))
+        body: (print_statement
+          (identifier))))))
+
+=================
+Destructuring let
+=================
+
+def main()
+  let (x, y) = compute_position()
+  let Player { hp, mp } = active_player()
+  let Item.Potion(amount) = the_item
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (tuple_pattern
+        (identifier)
+        (identifier))
+      value: (call_expression
+        function: (identifier)
+        arguments: (argument_list)))
+    body: (let_declaration
+      name: (struct_pattern
+        type: (identifier)
+        (field_pattern
+          name: (identifier))
+        (field_pattern
+          name: (identifier)))
+      value: (call_expression
+        function: (identifier)
+        arguments: (argument_list)))
+    body: (let_declaration
+      name: (variant_pattern
+        path: (dotted_name
+          (identifier)
+          (identifier))
+        (identifier))
+      value: (identifier))))
+
