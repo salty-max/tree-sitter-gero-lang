@@ -327,6 +327,7 @@ module.exports = grammar({
     repeat_statement: ($) =>
       seq(
         'repeat',
+        optional(field('label', $.loop_label)),
         optional($._newline),
         field('body', repeat($._terminated_statement)),
         'until',
@@ -633,9 +634,11 @@ module.exports = grammar({
         $.type_identifier,
       ),
 
-    // §3.1
+    // §3.1 — `int` / `uint` alias `i16` / `u16` and are the inference
+    // defaults. `nil` names a type internally but cannot be written as
+    // an annotation, so it is not one of these.
     primitive_type: (_) =>
-      choice('i8', 'u8', 'i16', 'u16', 'i32', 'u32', 'fx8', 'fx16', 'bool', 'str', 'nil'),
+      choice('i8', 'u8', 'i16', 'u16', 'int', 'uint', 'fixed', 'bool', 'str', 'char'),
 
     // §3.3 — `[T; N]`.
     array_type: ($) =>

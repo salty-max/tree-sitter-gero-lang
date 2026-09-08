@@ -7,12 +7,13 @@ def main()
   let b: u8 = 0
   let c: i16 = 0
   let d: u16 = 0
-  let e: i32 = 0
-  let f: u32 = 0
-  let g: fx8 = 0.5
-  let h: fx16 = 0.5
-  let i: bool = true
-  let j: str = ""
+  let e: int = 0
+  let f: uint = 0
+  let g: fixed = 0.5
+  let h: bool = true
+  let i: str = ""
+  let j: char = 'A'
+  print c
 end
 
 ---
@@ -52,15 +53,17 @@ end
     body: (let_declaration
       name: (identifier)
       type: (primitive_type)
-      value: (fixed))
-    body: (let_declaration
-      name: (identifier)
-      type: (primitive_type)
       value: (boolean))
     body: (let_declaration
       name: (identifier)
       type: (primitive_type)
-      value: (string))))
+      value: (string))
+    body: (let_declaration
+      name: (identifier)
+      type: (primitive_type)
+      value: (char))
+    body: (print_statement
+      (identifier))))
 
 ===============================
 Array, tuple and function types

@@ -1687,11 +1687,6 @@
     }
   },
   {
-    "type": "nil",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "nullable_type",
     "named": true,
     "fields": {
@@ -1894,6 +1889,16 @@
         "types": [
           {
             "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "label": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "loop_label",
             "named": true
           }
         ]
@@ -2542,6 +2547,10 @@
     "named": false
   },
   {
+    "type": "char",
+    "named": false
+  },
+  {
     "type": "class",
     "named": false
   },
@@ -2604,6 +2613,10 @@
   },
   {
     "type": "fixed",
+    "named": false
+  },
+  {
+    "type": "fixed",
     "named": true
   },
   {
@@ -2623,19 +2636,7 @@
     "named": false
   },
   {
-    "type": "fx16",
-    "named": false
-  },
-  {
-    "type": "fx8",
-    "named": false
-  },
-  {
     "type": "i16",
-    "named": false
-  },
-  {
-    "type": "i32",
     "named": false
   },
   {
@@ -2652,6 +2653,10 @@
   },
   {
     "type": "in",
+    "named": false
+  },
+  {
+    "type": "int",
     "named": false
   },
   {
@@ -2676,7 +2681,7 @@
   },
   {
     "type": "nil",
-    "named": false
+    "named": true
   },
   {
     "type": "not",
@@ -2735,11 +2740,11 @@
     "named": false
   },
   {
-    "type": "u32",
+    "type": "u8",
     "named": false
   },
   {
-    "type": "u8",
+    "type": "uint",
     "named": false
   },
   {

@@ -1663,6 +1663,22 @@
           "type": "CHOICE",
           "members": [
             {
+              "type": "FIELD",
+              "name": "label",
+              "content": {
+                "type": "SYMBOL",
+                "name": "loop_label"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
               "type": "SYMBOL",
               "name": "_newline"
             },
@@ -4033,19 +4049,15 @@
         },
         {
           "type": "STRING",
-          "value": "i32"
+          "value": "int"
         },
         {
           "type": "STRING",
-          "value": "u32"
+          "value": "uint"
         },
         {
           "type": "STRING",
-          "value": "fx8"
-        },
-        {
-          "type": "STRING",
-          "value": "fx16"
+          "value": "fixed"
         },
         {
           "type": "STRING",
@@ -4057,7 +4069,7 @@
         },
         {
           "type": "STRING",
-          "value": "nil"
+          "value": "char"
         }
       ]
     },
