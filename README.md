@@ -23,6 +23,13 @@ Operator precedence follows the §4.2.1 table exactly, including
 the two places it differs from the C family: ranges bind looser
 than `or`, and `is` sits between `and` and the comparisons.
 
+`if` appears as both a statement and an expression (§4.4.2). The
+conditional expression `cond and x or y` (§4.2.3) is **not** a
+distinct node: gero desugars it in its own parser, and telling it
+from the boolean chain `(a and b) or c` needs the operand types,
+which a context-free grammar does not have. It parses — and
+highlights — as the `and` / `or` operators it is spelled with.
+
 When the gero-lang spec bumps, this grammar bumps in lockstep —
 the grammar version mirrors the lowest gero-lang spec it parses
 cleanly.

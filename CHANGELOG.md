@@ -19,5 +19,6 @@ Initial grammar for gero-lang (`.gr`), tracking `docs/gero-lang.md`.
 - Operator precedence per the §4.2.1 table.
 - One-line blocks and the leading-`.` chain continuation, the two
   §2.1 carve-outs in the newline-terminated grammar.
+- `if` in value position (§4.4.2), alongside the statement form.
 - `queries/highlights.scm`, `queries/folds.scm`,
   `queries/indents.scm`.

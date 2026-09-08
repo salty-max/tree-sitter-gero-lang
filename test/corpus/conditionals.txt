@@ -1,0 +1,174 @@
+=============
+If as a value
+=============
+
+def main()
+  let a = if true 1 else 2 end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (if_expression
+        condition: (boolean)
+        consequence: (expression_statement
+          (number))
+        (else_clause
+          consequence: (expression_statement
+            (number)))))))
+
+=======================
+If as a value with elif
+=======================
+
+def main()
+  let label = if hp <= 0
+    "dead"
+  elif hp < 20
+    "hurt"
+  else
+    "ok"
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (if_expression
+        condition: (binary_expression
+          left: (identifier)
+          right: (number))
+        consequence: (expression_statement
+          (string))
+        (elif_clause
+          condition: (binary_expression
+            left: (identifier)
+            right: (number))
+          consequence: (expression_statement
+            (string)))
+        (else_clause
+          consequence: (expression_statement
+            (string)))))))
+
+==========================================
+A value if branch may run statements first
+==========================================
+
+def main()
+  let cost = if premium
+    let base = price * 2
+    base + shipping
+  else
+    price
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (if_expression
+        condition: (identifier)
+        consequence: (let_declaration
+          name: (identifier)
+          value: (binary_expression
+            left: (identifier)
+            right: (number)))
+        consequence: (expression_statement
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (else_clause
+          consequence: (expression_statement
+            (identifier)))))))
+
+======================
+The and-or conditional
+======================
+
+def main()
+  let speed = boosted and 20 or 10
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (number))
+        right: (number)))))
+
+===================================
+The and-or conditional chains right
+===================================
+
+def main()
+  let tier = score > 90 and 3 or score > 50 and 2 or 1
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (binary_expression
+        left: (binary_expression
+          left: (binary_expression
+            left: (binary_expression
+              left: (identifier)
+              right: (number))
+            right: (number))
+          right: (binary_expression
+            left: (binary_expression
+              left: (identifier)
+              right: (number))
+            right: (number)))
+        right: (number)))))
+
+=========================================
+A parenthesized and stays a boolean chain
+=========================================
+
+def main()
+  if (ready and armed) or override print 1 end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (if_statement
+      condition: (binary_expression
+        left: (parenthesized_expression
+          (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        right: (identifier))
+      consequence: (print_statement
+        (number)))))
+

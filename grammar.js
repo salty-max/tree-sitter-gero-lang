@@ -255,7 +255,22 @@ module.exports = grammar({
     return_statement: ($) => seq('return', optional($._expression)),
 
     // §4.4 — `if`, `elif`, `else`, plus the `if let` binding form.
+    // The precedence picks `if_statement` over `if_expression` at
+    // statement position, where both would otherwise match.
     if_statement: ($) =>
+      prec(1, seq(
+        'if',
+        field('condition', $._condition),
+        optional($._newline),
+        field('consequence', repeat($._terminated_statement)),
+        repeat($.elif_clause),
+        optional($.else_clause),
+        'end',
+      )),
+
+    // §4.4.2 — the same shape in value position, where the checker
+    // additionally requires the `else`.
+    if_expression: ($) =>
       seq(
         'if',
         field('condition', $._condition),
@@ -453,6 +468,7 @@ module.exports = grammar({
         $.lambda,
         $.short_lambda,
         $.do_expression,
+        $.if_expression,
         $.parenthesized_expression,
         $.identifier,
         $.self,
