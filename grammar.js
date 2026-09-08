@@ -335,8 +335,30 @@ module.exports = grammar({
       ),
 
     // §4.8 — arms are `case <pattern> [when guard] => ...`.
+    // The precedence picks the statement form at statement position,
+    // as for `if` and `do`.
     match_statement: ($) =>
-      seq('match', field('value', $._expression), optional($._newline), repeat($.match_arm), 'end'),
+      prec(
+        1,
+        seq(
+          'match',
+          field('value', $._expression),
+          optional($._newline),
+          repeat($.match_arm),
+          'end',
+        ),
+      ),
+
+    // §4.8.4 — the same shape in value position, where the checker
+    // additionally requires exhaustive arms of one type.
+    match_expression: ($) =>
+      seq(
+        'match',
+        field('value', $._expression),
+        optional($._newline),
+        repeat($.match_arm),
+        'end',
+      ),
 
     // The body may share the arrow's line or start on the next.
     match_arm: ($) =>
@@ -463,6 +485,7 @@ module.exports = grammar({
         $.short_lambda,
         $.do_expression,
         $.if_expression,
+        $.match_expression,
         $.sizeof_expression,
         $.parenthesized_expression,
         $.identifier,

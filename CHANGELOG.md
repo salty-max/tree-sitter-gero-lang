@@ -19,7 +19,8 @@ Initial grammar for gero-lang (`.gr`), tracking `docs/gero-lang.md`.
 - Operator precedence per the §4.2.1 table.
 - One-line blocks and the leading-`.` chain continuation, the two
   §2.1 carve-outs in the newline-terminated grammar.
-- `if` in value position (§4.4.2), alongside the statement form.
+- `if` and `match` in value position (§4.4.2, §4.8.4), alongside
+  their statement forms.
 - Postfix `(` and `[` are `token.immediate`, matching §4.6.1 — which
   also removed two declared conflicts the ambiguity had required.
 - `queries/highlights.scm`, `queries/folds.scm`,
