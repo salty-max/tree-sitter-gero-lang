@@ -15,10 +15,7 @@ jobs:
         with:
           node-version: 20
 
-      # `--ignore-scripts` skips `node-gyp rebuild` for the native node
-      # binding, which neither job needs and which fails without
-      # `node-addon-api`. Both only want `tree-sitter-cli`.
-      - run: npm install --ignore-scripts
+      - run: npm install
 
       # A stale src/parser.c against an edited grammar.js is the one
       # failure the corpus tests cannot catch, so regenerate first.
