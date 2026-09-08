@@ -30,12 +30,23 @@ cleanly.
 ## Newlines are significant
 
 gero-lang terminates statements at a newline and has no
-line-continuation operator, so `src/scanner.c` emits a `_newline`
-token wherever the grammar allows a statement to end. Inside
-brackets — argument lists, array and struct literals — the grammar
-does not allow one, the scanner declines, and the newline is
-consumed as ordinary whitespace. That is the whole of the external
-scanner; there is no bracket-depth or indentation state.
+trailing-operator continuation, so `src/scanner.c` emits a
+`_newline` token wherever the grammar allows a statement to end.
+Inside brackets — argument lists, array and struct literals — the
+grammar does not allow one, the scanner declines, and the newline is
+consumed as ordinary whitespace. There is no bracket-depth or
+indentation state.
+
+The scanner handles the two carve-outs in §2.1:
+
+- A statement also ends against the keyword closing its block
+  (`end`, `else`, `elif`, `until`, `case`), which is what lets a
+  whole block sit on one line — `if x print 1 end`. The scanner
+  emits a **zero-width** `_newline` there, leaving the keyword for
+  the enclosing rule.
+- A `.` opening the next line continues the postfix chain on the
+  previous expression (§4.6.3), so that newline is **not** a
+  terminator.
 
 ## Use
 

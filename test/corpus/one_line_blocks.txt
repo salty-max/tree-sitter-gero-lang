@@ -1,0 +1,212 @@
+==============
+If on one line
+==============
+
+def main()
+  if x print 1 end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (if_statement
+      condition: (identifier)
+      consequence: (print_statement
+        (number)))))
+
+=================================
+If with else and elif on one line
+=================================
+
+def main()
+  if x print 1 else print 2 end
+  if x print 1 elif y print 2 else print 3 end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (if_statement
+      condition: (identifier)
+      consequence: (print_statement
+        (number))
+      (else_clause
+        consequence: (print_statement
+          (number))))
+    body: (if_statement
+      condition: (identifier)
+      consequence: (print_statement
+        (number))
+      (elif_clause
+        condition: (identifier)
+        consequence: (print_statement
+          (number)))
+      (else_clause
+        consequence: (print_statement
+          (number))))))
+
+=================
+Loops on one line
+=================
+
+def main()
+  while x tick() end
+  for i in 0..2 print i end
+  repeat tick() until done
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (while_statement
+      condition: (identifier)
+      body: (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list))))
+    body: (for_statement
+      binding: (identifier)
+      iterable: (range_expression
+        start: (number)
+        end: (number))
+      body: (print_statement
+        (identifier)))
+    body: (repeat_statement
+      body: (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list)))
+      condition: (identifier))))
+
+==============================
+Blocks and lambdas on one line
+==============================
+
+def main()
+  do print 1 end
+  let add5 = lambda (x: i16) -> i16  return x + 5  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (print_statement
+        (number)))
+    body: (let_declaration
+      name: (identifier)
+      value: (lambda
+        parameters: (parameter_list
+          (parameter
+            name: (identifier)
+            type: (primitive_type)))
+        return_type: (primitive_type)
+        body: (return_statement
+          (binary_expression
+            left: (identifier)
+            right: (number)))))))
+
+========================
+Declarations on one line
+========================
+
+struct Pt x: i16 end
+enum E case A end
+def f() -> i16 return 1 end
+
+---
+
+(source_file
+  (struct_definition
+    name: (identifier)
+    (field_declaration
+      name: (identifier)
+      type: (primitive_type)))
+  (enum_definition
+    name: (identifier)
+    (enum_variant
+      name: (identifier)))
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (primitive_type)
+    body: (return_statement
+      (number))))
+
+======================
+Match arms on one line
+======================
+
+def main()
+  match n
+    case 1 => print 1 case _ => print 2
+  end
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (match_statement
+      value: (identifier)
+      (match_arm
+        pattern: (number)
+        body: (print_statement
+          (number)))
+      (match_arm
+        pattern: (wildcard_pattern)
+        body: (print_statement
+          (number))))))
+
+=========================================
+A leading dot continues the postfix chain
+=========================================
+
+def main()
+  let n = xs
+    .len()
+  let m = xs
+    .map(f)
+    .len()
+end
+
+---
+
+(source_file
+  (function_definition
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (let_declaration
+      name: (identifier)
+      value: (call_expression
+        function: (member_expression
+          object: (identifier)
+          property: (identifier))
+        arguments: (argument_list)))
+    body: (let_declaration
+      name: (identifier)
+      value: (call_expression
+        function: (member_expression
+          object: (call_expression
+            function: (member_expression
+              object: (identifier)
+              property: (identifier))
+            arguments: (argument_list
+              (identifier)))
+          property: (identifier))
+        arguments: (argument_list)))))
+

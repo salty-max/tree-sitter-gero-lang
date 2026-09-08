@@ -44,6 +44,17 @@ module.exports = grammar({
     // must see `@abstract`). Only one read survives the tokens ahead.
     [$._annotation, $.function_definition, $._def_head],
     [$._annotation, $.function_definition],
+    // `a | b | c` versus the short lambda `|b| c`, now that a body may
+    // follow a block head on the same line. `short_lambda` carries a
+    // negative dynamic precedence, so bitwise-or wins the tie.
+    [$.parameter, $._expression],
+    // `f (x)` on a block head's line: a call, or the head followed by a
+    // parenthesized statement. The parser reads it greedily as a call,
+    // and `call_expression`'s dynamic precedence says the same here.
+    [$.parenthesized_expression, $.argument_list],
+    // Same shape one comma deeper: `(a, b` is a tuple mid-flight or an
+    // argument list mid-flight until the head's body settles it.
+    [$.tuple_expression],
   ],
 
   rules: {
@@ -54,8 +65,11 @@ module.exports = grammar({
 
     // ---------- statements (§4) ----------
 
-    // Every statement ends at a newline (or end of input); gero has no
-    // one-line block forms and no operator line-continuation.
+    // A statement ends at a newline, at end of input, or against the
+    // keyword closing the block it sits in (§2.1) — the last of which
+    // is what lets a whole block fit on one line. The scanner emits a
+    // zero-width `_newline` for that case, leaving the keyword for the
+    // enclosing rule.
     _terminated_statement: ($) => seq($._statement, $._newline),
 
     _statement: ($) =>
@@ -156,7 +170,7 @@ module.exports = grammar({
     // separate branch so the body is never optional at a given site.
     function_definition: ($) =>
       choice(
-        seq($._def_head, $._newline, field('body', repeat($._terminated_statement)), 'end'),
+        seq($._def_head, optional($._newline), field('body', repeat($._terminated_statement)), 'end'),
         seq(
           optional('local'),
           repeat($.annotation),
@@ -200,7 +214,7 @@ module.exports = grammar({
         'class',
         field('name', $.identifier),
         optional(seq('extends', field('superclass', $.identifier))),
-        $._newline,
+        optional($._newline),
         field('body', repeat($._terminated_statement)),
         'end',
       ),
@@ -212,7 +226,7 @@ module.exports = grammar({
         repeat($._annotation),
         'struct',
         field('name', $.identifier),
-        $._newline,
+        optional($._newline),
         repeat(seq($.field_declaration, optional(','), $._newline)),
         'end',
       ),
@@ -226,7 +240,7 @@ module.exports = grammar({
         repeat($._annotation),
         'enum',
         field('name', $.identifier),
-        $._newline,
+        optional($._newline),
         repeat(seq($.enum_variant, $._newline)),
         'end',
       ),
@@ -245,7 +259,7 @@ module.exports = grammar({
       seq(
         'if',
         field('condition', $._condition),
-        $._newline,
+        optional($._newline),
         field('consequence', repeat($._terminated_statement)),
         repeat($.elif_clause),
         optional($.else_clause),
@@ -256,11 +270,11 @@ module.exports = grammar({
       seq(
         'elif',
         field('condition', $._condition),
-        $._newline,
+        optional($._newline),
         field('consequence', repeat($._terminated_statement)),
       ),
 
-    else_clause: ($) => seq('else', $._newline, field('consequence', repeat($._terminated_statement))),
+    else_clause: ($) => seq('else', optional($._newline), field('consequence', repeat($._terminated_statement))),
 
     // §4.4.1 / §4.5.1 — a binding condition, with an optional guard.
     _condition: ($) => choice($.let_condition, $._expression),
@@ -279,7 +293,7 @@ module.exports = grammar({
         'while',
         field('condition', $._condition),
         optional(field('label', $.loop_label)),
-        $._newline,
+        optional($._newline),
         field('body', repeat($._terminated_statement)),
         'end',
       ),
@@ -293,7 +307,7 @@ module.exports = grammar({
         field('iterable', $._expression),
         optional(seq('step', field('step', $._expression))),
         optional(field('label', $.loop_label)),
-        $._newline,
+        optional($._newline),
         field('body', repeat($._terminated_statement)),
         'end',
       ),
@@ -305,7 +319,7 @@ module.exports = grammar({
     repeat_statement: ($) =>
       seq(
         'repeat',
-        $._newline,
+        optional($._newline),
         field('body', repeat($._terminated_statement)),
         'until',
         field('condition', $._expression),
@@ -313,7 +327,7 @@ module.exports = grammar({
 
     // §4.8 — arms are `case <pattern> [when guard] => ...`.
     match_statement: ($) =>
-      seq('match', field('value', $._expression), $._newline, repeat($.match_arm), 'end'),
+      seq('match', field('value', $._expression), optional($._newline), repeat($.match_arm), 'end'),
 
     // The body may share the arrow's line or start on the next.
     match_arm: ($) =>
@@ -330,7 +344,7 @@ module.exports = grammar({
     // The precedence picks `block` over `do_expression` at statement
     // position, where both would otherwise match.
     block: ($) =>
-      prec(1, seq(optional('bake'), 'do', $._newline, repeat($._terminated_statement), 'end')),
+      prec(1, seq(optional('bake'), 'do', optional($._newline), repeat($._terminated_statement), 'end')),
 
     // §4.9 — `print a, b, c`.
     print_statement: ($) => seq('print', commaSep1($._expression)),
@@ -509,7 +523,10 @@ module.exports = grammar({
       ),
 
     call_expression: ($) =>
-      prec(PREC.call, seq(field('function', $._expression), field('arguments', $.argument_list))),
+      prec.dynamic(
+        1,
+        prec(PREC.call, seq(field('function', $._expression), field('arguments', $.argument_list))),
+      ),
 
     argument_list: ($) => seq('(', optional(commaSep($._expression)), ')'),
 
@@ -559,7 +576,7 @@ module.exports = grammar({
         'lambda',
         field('parameters', $.parameter_list),
         optional(seq('->', field('return_type', $._type))),
-        $._newline,
+        optional($._newline),
         field('body', repeat($._terminated_statement)),
         'end',
       ),
@@ -579,7 +596,7 @@ module.exports = grammar({
 
     // §4.3 — `do … end` in expression position.
     do_expression: ($) =>
-      seq(optional('bake'), 'do', $._newline, repeat($._terminated_statement), 'end'),
+      seq(optional('bake'), 'do', optional($._newline), repeat($._terminated_statement), 'end'),
 
     self: (_) => 'self',
     super: (_) => 'super',

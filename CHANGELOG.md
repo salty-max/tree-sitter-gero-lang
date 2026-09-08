@@ -17,5 +17,7 @@ Initial grammar for gero-lang (`.gr`), tracking `docs/gero-lang.md`.
 - Types: primitives, `[T; N]`, tuples, `fn(…) -> T`, `T?`, `&T`,
   `Vec(T)`, and variadic `...`.
 - Operator precedence per the §4.2.1 table.
+- One-line blocks and the leading-`.` chain continuation, the two
+  §2.1 carve-outs in the newline-terminated grammar.
 - `queries/highlights.scm`, `queries/folds.scm`,
   `queries/indents.scm`.
