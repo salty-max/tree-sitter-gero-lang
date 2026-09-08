@@ -6,3 +6,4 @@ prebuilds/
 *.so
 *.dll
 *.wasm
+tree-sitter-gero_lang.wasm

@@ -79,6 +79,26 @@ ship with the parser — point your editor's runtime path at them.
 Use the [`vscode-gero`](https://github.com/salty-max/vscode-gero)
 extension; it bundles this grammar plus a TextMate fallback.
 
+## Browser consumers
+
+Every tagged release carries a prebuilt grammar for
+[`web-tree-sitter`](https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web),
+which cannot compile a grammar itself:
+
+```
+https://github.com/salty-max/tree-sitter-gero-lang/releases/download/<tag>/tree-sitter-gero_lang.wasm
+```
+
+```js
+await Parser.init();
+const lang = await Language.load("tree-sitter-gero_lang.wasm");
+const parser = new Parser();
+parser.setLanguage(lang);
+```
+
+The asset is built and smoke-tested on tag by `.github/workflows/release.yml`,
+so it cannot go missing by someone forgetting to run a command.
+
 ## Develop
 
 ```bash

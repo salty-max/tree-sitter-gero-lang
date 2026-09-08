@@ -1,0 +1,53 @@
+name: Release
+
+# A browser consumer cannot compile the grammar itself — `web-tree-sitter`
+# loads a prebuilt `.wasm`. Building it on tag rather than by hand is the
+# point: an asset that depends on someone remembering is an asset that
+# goes missing.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      - name: Build the wasm grammar
+        run: npx tree-sitter build --wasm
+
+      - name: Check it loads and parses
+        run: |
+          npm install --no-save web-tree-sitter
+          node --input-type=module -e '
+            import { createRequire } from "module";
+            const require = createRequire(process.cwd() + "/");
+            const TS = require("web-tree-sitter");
+            const Parser = TS.Parser ?? TS.default?.Parser ?? TS;
+            const Language = TS.Language ?? TS.default?.Language;
+            await Parser.init();
+            const lang = await Language.load("tree-sitter-gero_lang.wasm");
+            const p = new Parser();
+            p.setLanguage(lang);
+            const t = p.parse("def main()\n  print 1\nend\n");
+            if (t.rootNode.type !== "source_file" || t.rootNode.hasError) {
+              throw new Error("the wasm grammar did not parse a trivial program");
+            }
+            console.log("wasm grammar loads and parses");
+          '
+
+      - name: Attach to the release
+        run: gh release upload "${GITHUB_REF_NAME}" tree-sitter-gero_lang.wasm --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
