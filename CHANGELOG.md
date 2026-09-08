@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.1
+
+Ships the prebuilt grammar browser consumers need.
+
+- `.github/workflows/release.yml` builds `tree-sitter-gero_lang.wasm`
+  on tag, smoke-tests that it loads and parses, and attaches it to the
+  release. `web-tree-sitter` cannot compile a grammar itself, so
+  without the asset no browser consumer could use this one.
+- README names the artifact and its URL shape.
+
+`v0.1.0` shipped without it — the grammar was correct but unusable
+from a browser.
+
 ## 0.1.0
 
 Initial grammar for gero-lang (`.gr`), tracking `docs/gero-lang.md`.
