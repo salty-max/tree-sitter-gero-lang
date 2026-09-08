@@ -47,7 +47,17 @@ jobs:
             console.log("wasm grammar loads and parses");
           '
 
-      - name: Attach to the release
-        run: gh release upload "${GITHUB_REF_NAME}" tree-sitter-gero_lang.wasm --clobber
+      # Create-or-upload, so pushing a tag is sufficient on its own — the
+      # release need not already exist for the asset to land.
+      - name: Publish the release with the asset
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" tree-sitter-gero_lang.wasm --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              --title "${GITHUB_REF_NAME}" \
+              --generate-notes \
+              tree-sitter-gero_lang.wasm
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
