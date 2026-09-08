@@ -48,6 +48,7 @@
 [
   "print"
   "asm"
+  "sizeof"
 ] @keyword.builtin
 
 ; -------- Annotations (§2.7) --------

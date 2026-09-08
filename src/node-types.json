@@ -80,6 +80,10 @@
         "named": true
       },
       {
+        "type": "sizeof_expression",
+        "named": true
+      },
+      {
         "type": "string",
         "named": true
       },
@@ -1958,6 +1962,22 @@
     }
   },
   {
+    "type": "sizeof_expression",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
@@ -2684,6 +2704,10 @@
   },
   {
     "type": "self",
+    "named": false
+  },
+  {
+    "type": "sizeof",
     "named": false
   },
   {

@@ -48,13 +48,6 @@ module.exports = grammar({
     // follow a block head on the same line. `short_lambda` carries a
     // negative dynamic precedence, so bitwise-or wins the tie.
     [$.parameter, $._expression],
-    // `f (x)` on a block head's line: a call, or the head followed by a
-    // parenthesized statement. The parser reads it greedily as a call,
-    // and `call_expression`'s dynamic precedence says the same here.
-    [$.parenthesized_expression, $.argument_list],
-    // Same shape one comma deeper: `(a, b` is a tuple mid-flight or an
-    // argument list mid-flight until the head's body settles it.
-    [$.tuple_expression],
   ],
 
   rules: {
@@ -469,6 +462,7 @@ module.exports = grammar({
         $.short_lambda,
         $.do_expression,
         $.if_expression,
+        $.sizeof_expression,
         $.parenthesized_expression,
         $.identifier,
         $.self,
@@ -539,12 +533,11 @@ module.exports = grammar({
       ),
 
     call_expression: ($) =>
-      prec.dynamic(
-        1,
-        prec(PREC.call, seq(field('function', $._expression), field('arguments', $.argument_list))),
-      ),
+      prec(PREC.call, seq(field('function', $._expression), field('arguments', $.argument_list))),
 
-    argument_list: ($) => seq('(', optional(commaSep($._expression)), ')'),
+    // §4.6.1 — the bracket must touch the callee, so `foo (x)` is not
+    // a call and a one-line block's parenthesized body stays its own.
+    argument_list: ($) => seq(token.immediate('('), optional(commaSep($._expression)), ')'),
 
     // §3.4 — the property is an index on a tuple, a name elsewhere.
     member_expression: ($) =>
@@ -553,10 +546,16 @@ module.exports = grammar({
         seq(field('object', $._expression), '.', field('property', choice($.identifier, $.number))),
       ),
 
+    // §4.6.1 — attached, as for a call's arguments.
     index_expression: ($) =>
       prec(
         PREC.member,
-        seq(field('object', $._expression), '[', field('index', $._expression), ']'),
+        seq(
+          field('object', $._expression),
+          token.immediate('['),
+          field('index', $._expression),
+          ']',
+        ),
       ),
 
     // §3.4 — `Stats { hp: 1, mp: 0 }`.
@@ -613,6 +612,9 @@ module.exports = grammar({
     // §4.3 — `do … end` in expression position.
     do_expression: ($) =>
       seq(optional('bake'), 'do', optional($._newline), repeat($._terminated_statement), 'end'),
+
+    // The byte width of a type, resolved at compile time.
+    sizeof_expression: ($) => seq('sizeof', '(', field('type', $._type), ')'),
 
     self: (_) => 'self',
     super: (_) => 'super',
