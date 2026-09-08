@@ -22,14 +22,17 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm install
+      # `--ignore-scripts` skips `node-gyp rebuild` for the native node
+      # binding, which neither job needs and which fails without
+      # `node-addon-api`. Both only want `tree-sitter-cli`.
+      - run: npm install --ignore-scripts
 
       - name: Build the wasm grammar
         run: npx tree-sitter build --wasm
 
       - name: Check it loads and parses
         run: |
-          npm install --no-save web-tree-sitter
+          npm install --no-save --ignore-scripts web-tree-sitter
           node --input-type=module -e '
             import { createRequire } from "module";
             const require = createRequire(process.cwd() + "/");
